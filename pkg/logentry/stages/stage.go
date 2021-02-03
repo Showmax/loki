@@ -12,22 +12,23 @@ import (
 )
 
 const (
-	StageTypeJSON      = "json"
-	StageTypeRegex     = "regex"
-	StageTypeReplace   = "replace"
-	StageTypeMetric    = "metrics"
-	StageTypeLabel     = "labels"
-	StageTypeLabelDrop = "labeldrop"
-	StageTypeTimestamp = "timestamp"
-	StageTypeOutput    = "output"
-	StageTypeDocker    = "docker"
-	StageTypeCRI       = "cri"
-	StageTypeMatch     = "match"
-	StageTypeTemplate  = "template"
-	StageTypePipeline  = "pipeline"
-	StageTypeTenant    = "tenant"
-	StageTypeDrop      = "drop"
-	StageTypeMultiline = "multiline"
+	StageTypeCRI             = "cri"
+	StageTypeDocker          = "docker"
+	StageTypeDockerRecombine = "docker-recombine"
+	StageTypeDrop            = "drop"
+	StageTypeJSON            = "json"
+	StageTypeLabel           = "labels"
+	StageTypeLabelDrop       = "labeldrop"
+	StageTypeMatch           = "match"
+	StageTypeMetric          = "metrics"
+	StageTypeMultiline       = "multiline"
+	StageTypeOutput          = "output"
+	StageTypePipeline        = "pipeline"
+	StageTypeRegex           = "regex"
+	StageTypeReplace         = "replace"
+	StageTypeTemplate        = "template"
+	StageTypeTenant          = "tenant"
+	StageTypeTimestamp       = "timestamp"
 )
 
 // Processor takes an existing set of labels, timestamp and log entry and returns either a possibly mutated
@@ -36,6 +37,11 @@ type Processor interface {
 	Process(labels model.LabelSet, extracted map[string]interface{}, time *time.Time, entry *string)
 	Name() string
 }
+
+// Timestamp
+// Line
+// Labels
+// Extracted
 
 type Entry struct {
 	Extracted map[string]interface{}
@@ -72,6 +78,11 @@ func New(logger log.Logger, jobName *string, stageType string,
 	switch stageType {
 	case StageTypeDocker:
 		s, err = NewDocker(logger, registerer)
+		if err != nil {
+			return nil, err
+		}
+	case StageTypeDockerRecombine:
+		s, err = newDockerRecombine(logger)
 		if err != nil {
 			return nil, err
 		}
