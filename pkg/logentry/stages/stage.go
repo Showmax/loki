@@ -38,11 +38,6 @@ type Processor interface {
 	Name() string
 }
 
-// Timestamp
-// Line
-// Labels
-// Extracted
-
 type Entry struct {
 	Extracted map[string]interface{}
 	api.Entry
